@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Happy Birthday Baby ❤️</title>
+
+    <meta name="theme-color" content="#764ba2">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            color: #fff;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* ================= COUNTDOWN ================= */
+
+        .countdown-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+
+        .countdown-overlay h1 {
+            font-size: clamp(2.2rem, 7vw, 4rem);
+            margin-bottom: 15px;
+            text-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
+        }
+
+        .countdown-overlay p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+
+        .timer {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .time-box {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 20px 25px;
+            border-radius: 15px;
+            min-width: 90px;
+        }
+
+        .time-box span {
+            display: block;
+            font-size: 2.2rem;
+            color: #ffed4e;
+        }
+
+        .time-box small {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        main {
+            visibility: hidden;
+        }
+
+        /* ================= EXISTING STYLES ================= */
+
+        section {
+            position: relative;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            line-height: 1.2;
+            opacity: 0;
+            transform: translateY(50px);
+            text-shadow:
+                0 0 20px rgba(255, 255, 255, 0.3),
+                0 0 60px rgba(255, 237, 78, 0.25);
+        }
+
+        .hero .nicknames {
+            margin-top: 20px;
+            font-size: clamp(1rem, 3vw, 1.7rem);
+            color: #ffed4e;
+            font-style: italic;
+            opacity: 0;
+        }
+
+        .hero .date {
+            margin-top: 20px;
+            letter-spacing: 3px;
+            font-size: clamp(1.2rem, 4vw, 2rem);
+            opacity: 0;
+        }
+
+        .heart-container {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0;
+            color: #ff6b9d;
+        }
+
+        .divider {
+            height: 30vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            opacity: 0.7;
+        }
+
+        .message-section {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 50px 20px;
+        }
+
+        .message-card {
+            max-width: 720px;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: clamp(30px, 5vw, 60px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            opacity: 0;
+            transform: translateY(80px);
+        }
+
+        .highlight {
+            color: #ffed4e;
+            font-weight: bold;
+        }
+
+        .final-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .mouse-follower {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            /* translucent background with blur */
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 10px rgba(255, 107, 157, 0.5);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+        }
+
+        .final-message {
+            font-size: clamp(2rem, 7vw, 4rem);
+            opacity: 0;
+            transform: scale(0.6);
+            animation: heartbeat 3s infinite;
+        }
+
+        .final-signature {
+            margin-top: 30px;
+            font-size: clamp(1.2rem, 4vw, 2rem);
+            font-style: italic;
+            opacity: 0;
+        }
+
+        @keyframes heartbeat {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.03);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- mouse follower -->
+    <div class="mouse-follower"></div>
+
+    <!-- COUNTDOWN -->
+    <div class="countdown-overlay" id="countdown">
+        <h1>Something special is coming ❤️</h1>
+        <p>Counting down to your birthday</p>
+
+        <div class="timer">
+            <div class="time-box"><span id="days">0</span><small>Days</small></div>
+            <div class="time-box"><span id="hours">0</span><small>Hours</small></div>
+            <div class="time-box"><span id="minutes">0</span><small>Minutes</small></div>
+            <div class="time-box"><span id="seconds">0</span><small>Seconds</small></div>
+        </div>
+    </div>
+
+    <main id="content">
+
+        <!-- 🔽 YOUR EXISTING CONTENT (UNCHANGED) 🔽 -->
+
+        <!-- HERO -->
+        <section class="hero">
+            <div class="heart-container" id="heartContainer"></div>
+            <h1>Happy Birthday<br>Soumya Sachan ❤️</h1>
+            <div class="nicknames">My Champu, My Aloo, My Cuttuuu, My Beubeu 💕</div>
+            <div class="date">February 4, 2026</div>
+        </section>
+
+        <div class="divider">💫</div>
+
+        <!-- MESSAGE -->
+        <section class="message-section">
+            <div class="message-card">
+                <h2>To My Future Doctor 👩‍⚕️</h2>
+                <p>
+                    Watching you chase your white-coat dreams fills me with pride.
+                    Your dedication inspires me every day.
+                </p>
+                <p>
+                    One day you’ll save lives — and I’ll still be right there,
+                    calling you <span class="highlight">Champu</span>.
+                </p>
+            </div>
+        </section>
+
+        <div class="divider">❤️</div>
+
+        <!-- FINAL -->
+        <section class="final-section">
+            <div class="final-message">
+                I love you endlessly,<br>
+                Champu ❤️🩺
+            </div>
+            <div class="final-signature">
+                Forever yours,<br>
+                Your meow meow
+            </div>
+        </section>
+
+    </main>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        /* ================= COUNTDOWN LOGIC ================= */
+
+        const targetDate = new Date("January 4, 2026 00:00:00").getTime();
+        const countdown = document.getElementById("countdown");
+        const content = document.getElementById("content");
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const diff = targetDate - now;
+
+            if (diff <= 0) {
+                countdown.style.display = "none";
+                content.style.visibility = "visible";
+                ScrollTrigger.refresh();
+                return;
+            }
+
+            document.getElementById("days").textContent = Math.floor(diff / (1000 * 60 * 60 * 24));
+            document.getElementById("hours").textContent = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            document.getElementById("minutes").textContent = Math.floor((diff / (1000 * 60)) % 60);
+            document.getElementById("seconds").textContent = Math.floor((diff / 1000) % 60);
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        /* ================= EXISTING ANIMATIONS ================= */
+
+        gsap.timeline()
+            .to('.hero h1', { opacity: 1, y: 0, duration: 1.5 })
+            .to('.hero .nicknames', { opacity: 1, duration: 1 }, '-=0.5')
+            .to('.hero .date', { opacity: 1, duration: 1 }, '-=0.5');
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.textContent = ['❤️', '💖', '💕', '🩺', '😽'][Math.floor(Math.random() * 5)];
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.bottom = '-40px';
+            document.getElementById('heartContainer').appendChild(heart);
+
+            gsap.to(heart, {
+                y: -window.innerHeight - 100,
+                opacity: 1,
+                duration: 4,
+                onComplete: () => heart.remove()
+            });
+        }
+
+        setInterval(createHeart, 600);
+
+        gsap.utils.toArray('.message-card').forEach(el => {
+            gsap.to(el, {
+                opacity: 1,
+                y: 0,
+                scrollTrigger: {
+                    trigger: el,
+                    start: 'top 80%'
+                }
+            });
+        });
+
+        gsap.to('.final-message', {
+            opacity: 1,
+            scale: 1,
+            duration: 2,
+            scrollTrigger: {
+                trigger: '.final-message',
+                start: 'top 75%'
+            }
+        });
+
+        gsap.to('.final-signature', {
+            opacity: 1,
+            delay: 0.5,
+            scrollTrigger: {
+                trigger: '.final-signature',
+                start: 'top 85%'
+            }
+        });
+    </script>
+    <style>
+        /* ================= GALLERY ================= */
+        .gallery-section {
+            position: relative;
+            min-height: 150vh;
+            padding: 100px 20px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .gallery-container {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            height: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        .gallery-image-wrapper {
+            position: relative;
+            width: clamp(200px, 30vw, 350px);
+            aspect-ratio: 3/4;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(100px);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-image-wrapper:hover {
+            z-index: 10;
+            transform: scale(1.05) !important;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .gallery-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .loading-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ffed4e;
+            font-size: 1.2rem;
+            z-index: 5;
+        }
+    </style>
+
+    <script>
+        const mouseFollower = document.querySelector('.mouse-follower');
+
+        document.addEventListener('mousemove', (e) => {
+            mouseFollower.style.left = e.clientX + 'px';
+            mouseFollower.style.top = e.clientY + 'px';
+        });
+
+        // Image Assets List
+        const imageAssets = [
+            "20250723_174154.jpg",
+            "20250914_230554.jpg",
+            "20250915_004312_05.jpg",
+            "20251002_232857.jpg",
+            "20251010_175400.jpg",
+            "20251012_205505.jpg",
+            "20251105_163718(1).jpg",
+            "20251105_195847.jpg",
+            "20251116_112444.jpg",
+            "20251116_154728.jpg",
+            "20251116_181134.jpg",
+            "20251125_190432.jpg",
+            "20251205_201516.jpg",
+            "IMG-20251106-WA0016.jpg",
+            "IMG-20251208-WA0013.jpg",
+            "IMG-20251208-WA0016.jpg",
+            "Screenshot_20251004_150223_Snapchat.jpg"
+        ];
+
+        const galleryContainer = document.createElement('div');
+        galleryContainer.className = 'gallery-container';
+
+        const gallerySection = document.createElement('section');
+        gallerySection.className = 'gallery-section';
+        gallerySection.appendChild(galleryContainer);
+
+        // Insert gallery before the final section
+        const finalSection = document.querySelector('.final-section');
+        finalSection.parentNode.insertBefore(gallerySection, finalSection);
+
+        // Add a divider before gallery
+        const divider = document.createElement('div');
+        divider.className = 'divider';
+        divider.textContent = '📸';
+        finalSection.parentNode.insertBefore(divider, gallerySection);
+
+
+        function loadImages() {
+            imageAssets.forEach(filename => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'gallery-image-wrapper';
+
+                // Random parallax speed for each image
+                wrapper.dataset.speed = Math.random() * 0.5 + 0.2;
+
+                // Random margin for scattered look
+                wrapper.style.marginTop = Math.floor(Math.random() * 100) + 'px';
+
+                const loading = document.createElement('div');
+                loading.className = 'loading-indicator';
+                loading.textContent = 'Loading...';
+                wrapper.appendChild(loading);
+
+                galleryContainer.appendChild(wrapper);
+
+                const img = document.createElement('img');
+                img.src = `assets/${filename}`;
+                img.onload = () => {
+                    loading.remove();
+                    // Animate in
+                    gsap.to(wrapper, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 1,
+                        ease: "power2.out"
+                    });
+                };
+                img.onerror = () => {
+                    loading.textContent = 'Error';
+                    console.error(`Failed to load ${filename}`);
+                };
+                wrapper.appendChild(img);
+            });
+
+            initParallax();
+        }
+
+        function initParallax() {
+            gsap.utils.toArray('.gallery-image-wrapper').forEach((box, i) => {
+                const speed = parseFloat(box.dataset.speed) || 0.5;
+
+                gsap.to(box, {
+                    y: -100 * speed, // Move up as we scroll down
+                    scrollTrigger: {
+                        trigger: box,
+                        start: "top bottom",
+                        end: "bottom top",
+                        scrub: 1
+                    }
+                });
+            });
+        }
+
+        // Start loading images
+        loadImages();
+
+    </script>
+
+</body>
+
+</html>
