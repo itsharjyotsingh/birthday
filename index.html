@@ -8,14 +8,12 @@
 
     <meta name="theme-color" content="#764ba2">
 
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
         rel="stylesheet">
 
-    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -33,6 +31,37 @@
             background: linear-gradient(135deg, #667eea, #764ba2);
             background-size: 400% 400%;
             animation: gradientMove 15s ease infinite;
+            min-height: 100vh;
+        }
+
+        /* ================= VIDEO BACKGROUND STYLES ================= */
+        #video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
+            /* Puts it behind everything */
+            overflow: hidden;
+            pointer-events: none;
+            /* Prevents clicking on the video */
+        }
+
+        /* CSS trick to make iframe act like object-fit: cover */
+        #video-background iframe {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100vw;
+            height: 56.25vw;
+            /* 16:9 Aspect Ratio */
+            min-height: 100vh;
+            min-width: 177.77vh;
+            /* 16:9 Aspect Ratio */
+            transform: translate(-50%, -50%);
+            opacity: 0.4;
+            /* Adjusted opacity so text is readable over video */
         }
 
         @keyframes gradientMove {
@@ -277,6 +306,45 @@
             opacity: 0;
         }
 
+        #centralise {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #unmuteBtn {
+            position: fixed;
+            bottom: '5px';
+            right: '50%';
+            z-index: 9999;
+            scale: 5;
+
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            height: '20vh';
+            width: '20vw';
+            padding: 12px 18px;
+            border-radius: 50px;
+            font-size: 14px;
+            cursor: pointer;
+
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+        }
+
+        #unmuteBtn:hover {
+            transform: scale(1.08);
+        }
+
+        #unmuteBtn.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+
         @media (max-width: 768px) {
             .mouse-follower {
                 display: none !important;
@@ -299,11 +367,14 @@
 </head>
 
 <body>
+    <div id="video-background"></div>
 
-    <!-- mouse follower -->
+    <div id="centralise">
+        <button id="unmuteBtn">🔊 Enable Sound</button>
+    </div>
+
     <div class="mouse-follower"></div>
 
-    <!-- COUNTDOWN -->
     <div class="countdown-overlay" id="countdown">
         <h1>Something special is coming ❤️</h1>
         <p>Counting down to your birthday</p>
@@ -318,9 +389,6 @@
 
     <main id="content">
 
-        <!-- 🔽 YOUR EXISTING CONTENT (UNCHANGED) 🔽 -->
-
-        <!-- HERO -->
         <section class="hero">
             <div class="heart-container" id="heartContainer"></div>
             <h1>Happy Birthday<br>Soumya Sachan ❤️</h1>
@@ -330,7 +398,6 @@
 
         <div class="divider">💫</div>
 
-        <!-- MESSAGE -->
         <section class="message-section">
             <div class="message-card">
                 <h2>To My Future Waifu 👩‍⚕️</h2>
@@ -354,7 +421,6 @@
 
         <div class="divider">❤️</div>
 
-        <!-- FINAL -->
         <section class="final-section">
             <div class="final-message">
                 I love you endlessly,<br>
@@ -368,12 +434,59 @@
 
     </main>
 
-    <!-- GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
     <script>
         gsap.registerPlugin(ScrollTrigger);
+        let player;
+        let videoStarted = false;
+
+        function startBackgroundVideo() {
+            if (videoStarted) return;
+            videoStarted = true;
+
+            const tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            document.body.appendChild(tag);
+        }
+
+        // Called automatically by YouTube
+        function onYouTubeIframeAPIReady() {
+
+            player = new YT.Player('video-background', {
+                videoId: 'tB48sKGi5ag',
+
+                playerVars: {
+                    autoplay: 1,
+                    mute: 1, // MUST start muted
+                    controls: 0,
+                    showinfo: 0,
+                    modestbranding: 1,
+                    loop: 1,
+                    playlist: 'tB48sKGi5ag',
+                    start: 0
+                },
+
+                events: {
+                    onReady: (event) => {
+                        event.target.playVideo();
+                    }
+                }
+            });
+        }
+
+        document.getElementById("unmuteBtn").addEventListener("click", () => {
+
+            if (!player) return;
+
+            player.unMute();
+            player.setVolume(100);
+
+            document.getElementById("unmuteBtn").classList.add("hidden");
+        });
+
+
 
         /* ================= COUNTDOWN LOGIC ================= */
 
@@ -385,10 +498,15 @@
             const now = new Date().getTime();
             const diff = targetDate - now;
 
+            // IF TIME IS UP
             if (diff <= 0) {
                 countdown.style.display = "none";
                 content.style.visibility = "visible";
                 ScrollTrigger.refresh();
+
+                // TRIGGER VIDEO
+                startBackgroundVideo();
+
                 return;
             }
 
